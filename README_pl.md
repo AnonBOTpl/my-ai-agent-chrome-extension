@@ -1,6 +1,6 @@
 # 🤖 My AI Agent - Wszechstronne Rozszerzenie Chrome
 
-![Wersja](https://img.shields.io/badge/version-5.3-blue.svg)
+![Wersja](https://img.shields.io/badge/version-5.7-blue.svg)
 ![Manifest](https://img.shields.io/badge/Chrome_Manifest-V3-green.svg)
 ![Brak Zależności](https://img.shields.io/badge/dependencies-0-success.svg)
 
@@ -11,22 +11,26 @@
 ## ✨ Główne Funkcjonalności
 
 ### 💬 Czat wspierający wielu dostawców AI
-- Płynne przełączanie między topowymi modelami od **Google** (Gemini 2.5/2.0), **OpenAI** (GPT-4o, o3-mini) oraz **Anthropic** (Claude 3.5/3.7).
-- Dynamiczne przesyłanie strumieniowe odpowiedzi (streaming), wsparcie dla Markdown oraz kolorowania składni kodu.
+- Płynne przełączanie między topowymi modelami od **Google** (Gemini 2.5 Flash/Pro, 2.0 Flash), **OpenAI** (GPT-4o, GPT-4.1, o3-mini) oraz **Anthropic** (Claude Sonnet 4, Opus 4, Haiku 3.5).
+- Dynamiczne przesyłanie strumieniowe odpowiedzi (streaming), wsparcie dla Markdown, kolorowanie składni kodu oraz **klikalne linki**.
+- Bloki kodu zawierają **pole nazwy pliku** oraz przyciski **Kopiuj** i **Pobierz** — nazwa pliku jest automatycznie wykrywana z komentarzy w kodzie.
 - Wbudowany licznik tokenów pomagający kontrolować zużycie API.
-- Możliwość eksportu czatu do formatów **Markdown (.md)** oraz **PDF**.
+- Możliwość eksportu czatu do formatu **Markdown (.md)** lub estetycznie sformatowanego **PDF**.
 - Możliwość tworzenia i zarządzania **własnymi szablonami promptów** (Snippety).
+- **Edycja** wysłanych wiadomości i regeneracja odpowiedzi.
 
 ### 📄 Kontekstowe Narzędzia Tekstowe
 - Zaznacz dowolny tekst na stronie i błyskawicznie wywołaj akcję: **Wyjaśnij, Streszcz, Przetłumacz lub Popraw styl**.
 - Wbudowany syntezator mowy (TTS) umożliwiający czytanie na głos odpowiedzi AI.
+- **Licznik tokenów** widoczny przy każdym zapytaniu.
 
 ### 🖼️ Zaawansowana Praca z Obrazem
-- **Wycinanie na ekranie (Crop):** Zaznacz dowolny obszar ekranu, zrób zrzut (screenshot) i wyślij bezpośrednio do AI w celu analizy.
-- **Przeciągnij i Upuść / Wklej:** Wygodnie przeciągaj obrazy do panelu lub wklejaj je wprost ze schowka (Ctrl+V).
-- **Analiza Obrazu (Vision):** Zadawaj pytania dotyczące zawartości obrazków (Gemini Vision).
-- **Generowanie Obrazów:** Twórz niesamowite grafiki za pomocą **Google Imagen 4** lub **DALL-E 3**.
-- **Natywna Edycja Obrazów:** Edytuj grafiki z użyciem promptów i dedykowanych modeli sprzętowych (np. `gemini-2.5-flash-image`).
+- **Wycinanie na ekranie (Crop):** Zaznacz dowolny obszar ekranu, zrób zrzut i wyślij bezpośrednio do AI w celu analizy.
+- **Przeciągnij i Upuść / Wklej:** Wygodnie przeciągaj obrazy do panelu lub wklejaj wprost ze schowka (Ctrl+V) w każdej sekcji obrazu.
+- **Analiza Obrazu (Vision):** Zadawaj pytania dotyczące zawartości obrazków (Gemini Vision). Każde zapytanie wyświetla **licznik tokenów**.
+- **Generowanie Obrazów:** Twórz grafiki za pomocą **Google Imagen 4** lub **DALL-E 3**.
+- **Natywna Edycja Obrazów:** Edytuj grafiki promptami używając dedykowanych modeli Gemini (np. `gemini-2.5-flash-image`, `gemini-3-pro-image-preview`). Po edycji możesz **Pobrać** wynik, **Wysłać do Analizy** lub **Edytować ponownie** — umożliwiając iteracyjną pętlę edycji.
+- Osobny selektor **Modelu do Edycji Obrazów** w Ustawieniach ze skanerem wykrywającym dostępne modele z Twojego klucza API.
 
 ### 🔒 Bezpieczeństwo i Lekkość
 - **Zero zewnętrznych zależności:** Zbudowano własny, ultra-lekki parser Markdown oraz mechanizm podświetlania składni (Syntax Highlighter).
@@ -36,15 +40,6 @@
 - Obsługa motywów: Jasny / Ciemny / Automatyczny (systemowy).
 - Interfejs w pełni dostępny po polsku (auto-detekcja języka przeglądarki).
 - Pływająca ikona szybkiego wywołania i integracja z menu kontekstowym przeglądarki (Prawy przycisk myszy na obrazku -> "Wyślij obraz do Agenta AI").
-
----
-
-## 📸 Zrzuty ekranu
-
-*(Dodaj swoje zrzuty ekranu tutaj)*
-* `![Interfejs Czatu](LINK_DO_OBRAZKA)` - Pokaż czat i opcje modeli.
-* `![Zrzuty Ekranu](LINK_DO_OBRAZKA)` - Pokaż narzędzie do zaznaczania obszaru strony i edytor AI.
-* `![Narzędzia Tekstowe](LINK_DO_OBRAZKA)` - Pokaż narzędzia wywoływane na zaznaczonym tekście.
 
 ---
 

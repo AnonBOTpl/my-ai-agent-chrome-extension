@@ -41,10 +41,17 @@
 
 ## 📸 Screenshots
 
-*(Add your screenshots here)*
-* `![Chat Interface](URL_to_image)` - Showcase the chat and provider selection.
-* `![Image Tools](URL_to_image)` - Showcase the image upload and generation.
-* `![Text Tools](URL_to_image)` - Showcase the text selection on a webpage.
+### Chat Interface
+
+![Chat Interface](https://raw.githubusercontent.com/AnonBOTpl/my-ai-agent-chrome-extension/refs/heads/main/chat.png)
+
+### Image Tools
+
+![Image Tools](https://raw.githubusercontent.com/AnonBOTpl/my-ai-agent-chrome-extension/refs/heads/main/image.png)
+
+### Text Tools
+
+![Text Tools](https://raw.githubusercontent.com/AnonBOTpl/my-ai-agent-chrome-extension/refs/heads/main/text.png)
 
 ---
 

@@ -6,7 +6,7 @@
 
 **My AI Agent** is a powerful, lightweight, and versatile Chrome Extension that integrates the world's most advanced Large Language Models (LLMs) directly into your browser's Side Panel. Built with **vanilla JavaScript** and zero external dependencies, it offers lightning-fast performance, extreme privacy, and a rich set of features for dealing with text and images on the fly.
 
-*[Przeczytaj to README po polsku](README.pl.md)*
+*[Przeczytaj to README po polsku](README_pl.md)*
 
 ## ✨ Key Features
 

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src https://generativelanguage.googleapis.com https://api.openai.com https://api.anthropic.com;">
+  <title>AI Agent</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo-area">
+      <img src="icon.png" alt="Logo">
+      <span id="appName">AI Agent</span>
+    </div>
+    <div class="header-right">
+      <div id="token-counter" class="token-counter hidden">
+        <span id="tokenCount">0</span><span class="token-label"> tk</span>
+      </div>
+      <button id="btnStopTTS" title="Stop">⏹️</button>
+      <button id="btnSettings" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-target="view-chat" id="tabChat">💬 Chat</button>
+    <button class="tab-btn" data-target="view-text" id="tabText">📄 Text</button>
+    <button class="tab-btn" data-target="view-image" id="tabImage">🖼️ Image</button>
+  </nav>
+
+  <!-- ═══════════ CHAT ═══════════ -->
+  <div id="view-chat" class="tab-content active">
+    <div id="chat-toolbar">
+      <button id="btnExportChat">⬇️ Export .md</button>
+      <button id="btnExportPdf">📄 Export PDF</button>
+      <button id="btnClearChat">🗑️ Clear</button>
+    </div>
+
+    <div id="chat-container">
+      <div class="message ai-msg" id="greetingMsg">Hi! How can I help you?</div>
+    </div>
+
+    <!-- Snippety + przycisk własnych -->
+    <div id="prompt-snippets">
+      <button class="snippet-btn" id="snipExplain"   data-key="snippetExplainPrefix">💡 Explain</button>
+      <button class="snippet-btn" id="snipSummarize" data-key="snippetSummarizePrefix">📝 Summarize</button>
+      <button class="snippet-btn" id="snipCode"      data-key="snippetCodePrefix">🔧 Code</button>
+      <button class="snippet-btn" id="snipTranslate" data-key="snippetTranslatePrefix">🌍 Translate</button>
+      <button class="snippet-btn snippet-add" id="btnOpenCustomSnippets">+ Custom</button>
+    </div>
+
+    <div id="chat-image-preview-wrap" class="hidden">
+      <div id="chat-image-preview-inner">
+        <img id="chatImagePreview" src="" alt="">
+        <button id="btnRemoveChatImage">✖</button>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="chat-input-wrapper" id="chatDropTarget">
+        <textarea id="chatInput" rows="1"></textarea>
+        <button id="btnAttachImage">📎</button>
+        <input type="file" id="chatFileInput" accept="image/*" style="display:none">
+      </div>
+      <button id="btnChatSend">➤</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ TEXT ═══════════ -->
+  <div id="view-text" class="tab-content">
+    <div class="panel-section">
+      <p class="hint" id="textHint">Select text on the page and choose an action:</p>
+      <button class="tool-btn" data-cmd="explain"   id="toolExplain">🔍 Explain</button>
+      <button class="tool-btn" data-cmd="summarize" id="toolSummarize">📝 Summarize</button>
+      <button class="tool-btn" data-cmd="translate" id="toolTranslate">🌍 Translate</button>
+      <button class="tool-btn" data-cmd="rewrite"   id="toolRewrite">✏️ Improve style</button>
+      <button class="tool-btn" data-cmd="read"      id="toolRead">🗣️ Read aloud</button>
+    </div>
+    <div id="text-output" class="result-box">Result will appear here...</div>
+    <div id="text-actions" class="result-actions hidden">
+      <button id="btnCopyTextResult" class="action-btn">📋 Copy</button>
+      <button id="btnReadTextResult" class="action-btn">🗣️ Read</button>
+      <span id="text-token-counter" class="result-token-counter hidden"><span id="textTokenCount">0</span> tk</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ IMAGE ═══════════ -->
+  <div id="view-image" class="tab-content">
+    <div class="sub-tabs">
+      <button class="sub-tab-btn active" data-subtarget="sub-analyze" id="subAnalyzeBtn">🔍 Analyze</button>
+      <button class="sub-tab-btn" data-subtarget="sub-generate" id="subGenerateBtn">🎨 Generate</button>
+      <button class="sub-tab-btn" data-subtarget="sub-edit" id="subEditBtn">✏️ Edit</button>
+    </div>
+    <div id="sub-analyze" class="sub-content active">
+      <div id="drop-zone">
+        <p id="dropZoneText">Drag an image here</p>
+        <p style="font-size:10px;opacity:.7" id="dropZoneOr">or:</p>
+        <button id="btnSelectArea">📸 Select area</button>
+        <label class="tool-btn" style="cursor:pointer;justify-content:center;margin:4px auto 0;width:auto;padding:5px 12px;font-size:11px;">
+          📎 <span id="analyzeAttachLabel">Select file</span>
+          <input type="file" id="analyzeFileInput" accept="image/*" style="display:none">
+        </label>
+        <p style="font-size:10px;opacity:.7;margin-top:4px">Ctrl+V to paste from clipboard</p>
+      </div>
+      <div id="image-preview-container" class="hidden">
+        <img id="image-preview" src="" alt="Preview">
+        <button id="btnClearImage">✖ Remove</button>
+      </div>
+      <div id="image-actions" class="hidden">
+        <button class="tool-btn" id="btnAnalyzeImg">👀 What's in the image?</button>
+        <button class="tool-btn" id="btnStableDiffusion">🎨 Stable Diffusion Prompt</button>
+        <button class="tool-btn" id="btnSendImgToChat">💬 Send to chat</button>
+      </div>
+      <div id="image-output" class="result-box">...</div>
+      <div id="image-result-actions" class="result-actions hidden">
+        <button id="btnCopyImageResult" class="action-btn">📋 Copy</button>
+        <button id="btnReadImageResult" class="action-btn">🗣️ Read</button>
+        <span id="image-token-counter" class="result-token-counter hidden"><span id="imageTokenCount">0</span> tk</span>
+      </div>
+    </div>
+    <div id="sub-generate" class="sub-content">
+      <div class="panel-section">
+        <p class="hint" id="generateHint">Describe what you want to generate:</p>
+        <textarea id="genPromptInput" rows="3" placeholder="E.g. Cyberpunk cat on a motorcycle..."></textarea>
+        <label class="enhance-label">
+          <input type="checkbox" id="enhancePromptCheck" checked>
+          <span id="enhanceLabel">✨ Enhance prompt with AI (recommended)</span>
+        </label>
+        <button class="tool-btn" id="btnGenerateImage" style="background:#4285f4;color:white;font-weight:bold;margin-top:8px;">🎨 Generate Image</button>
+      </div>
+      <div id="gen-no-gemini" class="info-banner hidden"></div>
+      <div id="gen-result-container" class="hidden">
+        <div id="gen-skeleton" class="img-skeleton hidden"></div>
+        <p id="gen-status"></p>
+        <img id="generated-image" src="" alt="Generated image">
+        <a id="btnDownloadImg" href="#" download="generated.png" class="tool-btn hidden">⬇️ Download</a>
+      </div>
+    </div>
+
+    <!-- ═══ EDYTUJ ═══ -->
+    <div id="sub-edit" class="sub-content">
+      <div id="edit-img-info-banner" class="info-banner" style="margin-bottom:10px;">
+        ⚠️ <span id="editImgInfoText">Image editing requires a <strong>Google Gemini</strong> key set in settings. Only Imagen models are supported.</span>
+      </div>
+      <div id="edit-drop-zone" class="drop-zone-edit">
+        <p id="editDropZoneText">Drag an image here</p>
+        <p style="font-size:10px;opacity:.7">or:</p>
+        <label class="tool-btn" style="cursor:pointer;justify-content:center;margin:0 auto;width:auto;padding:6px 14px;">
+          📎 <span id="editAttachLabel">Select file</span>
+          <input type="file" id="editFileInput" accept="image/*" style="display:none">
+        </label>
+        <p style="font-size:10px;opacity:.7;margin-top:4px" id="editPasteHint">or paste from clipboard (Ctrl+V)</p>
+      </div>
+      <div id="edit-preview-container" class="hidden">
+        <div style="position:relative;text-align:center;margin-bottom:10px;">
+          <img id="editImagePreview" src="" alt="" style="max-width:100%;max-height:180px;border-radius:6px;border:1px solid var(--border);">
+          <button id="btnClearEditImage" style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.6);color:white;border:none;cursor:pointer;padding:3px 8px;border-radius:4px;font-size:11px;">✖ Remove</button>
+        </div>
+        <div class="panel-section">
+          <label style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;" id="editPromptLabel">Edit instruction:</label>
+          <textarea id="editPromptInput" rows="3" placeholder="e.g. Remove the background, Change shirt to red, Add sunglasses..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;background:var(--bg-header);color:var(--text-main);resize:vertical;font-family:inherit;font-size:var(--font-size-ui);"></textarea>
+          <button class="tool-btn" id="btnEditImage" style="background:#4285f4;color:white;font-weight:bold;margin-top:6px;">✏️ <span id="btnEditImageLabel">Edit Image</span></button>
+        </div>
+        <div id="edit-result-container" class="hidden" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div id="edit-skeleton" class="img-skeleton hidden"></div>
+          <p id="edit-status" style="font-size:12px;color:var(--text-secondary);margin:0;"></p>
+          <img id="edited-image" src="" alt="Edited image" style="max-width:100%;border-radius:8px;border:1px solid var(--border);display:none;">
+          <div id="edit-result-actions" class="hidden" style="display:flex;gap:6px;width:100%;flex-wrap:wrap;">
+            <a id="btnDownloadEditImg" href="#" download="edited.png" class="action-btn" style="flex:1;text-align:center;text-decoration:none;">⬇️ Download</a>
+            <button id="btnEditResultToAnalyze" class="action-btn" style="flex:1;">🔍 Send to Analyze</button>
+            <button id="btnEditResultReedit" class="action-btn" style="flex:1;">🔄 Re-edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MODAL: WŁASNE SNIPPETY ═══════════ -->
+  <div id="custom-snippets-modal" class="hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="customSnippetsTitle">📌 Custom Templates</h3>
+        <button class="modal-close" id="btnCloseCustomSnippets">✖</button>
+      </div>
+      <div id="custom-snippets-list"></div>
+      <div class="snippet-form">
+        <label id="snippetNameLbl">Name:</label>
+        <input type="text" id="snippetNameInput" placeholder="e.g. Write email" maxlength="30">
+        <label id="snippetPrefixLbl">Prefix:</label>
+        <textarea id="snippetPrefixInput" rows="2" placeholder="e.g. Write a professional email: "></textarea>
+        <button id="btnAddSnippet" class="add-snippet-btn">➕ Add template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MODAL: POTWIERDŹ WYCZYSZCZENIE ═══════════ -->
+  <div id="confirm-modal" class="hidden">
+    <div class="modal-content confirm-content">
+      <h3 id="confirmTitle">Clear chat?</h3>
+      <p id="confirmMsg">This cannot be undone.</p>
+      <div class="confirm-buttons">
+        <button id="btnConfirmOk" class="btn-danger">🗑️ Clear</button>
+        <button id="btnConfirmCancel" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MODAL: EDYTUJ WIADOMOŚĆ ═══════════ -->
+  <div id="edit-modal" class="hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="editMsgTitle">Edit message</h3>
+        <button class="modal-close" id="btnCloseEdit">✖</button>
+      </div>
+      <textarea id="editMsgInput" rows="5"></textarea>
+      <div class="edit-buttons">
+        <button id="btnEditSave" class="btn-primary">✅ Save &amp; resend</button>
+        <button id="btnEditCancel" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ USTAWIENIA ═══════════ -->
+  <div id="settings-modal" class="hidden">
+    <div class="settings-content">
+      <h3 id="settingsTitle">⚙️ Settings</h3>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionProviders">🔑 API Keys</div>
+
+        <label id="geminiKeyLabel">API Key — Google Gemini:</label>
+        <div class="key-input-row">
+          <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+          <button class="key-toggle" data-target="apiKeyInput">👁</button>
+          <button class="key-validate-btn" data-provider="gemini" id="btnValidateGemini">Check</button>
+        </div>
+        <div class="key-status" id="statusGemini"></div>
+        <p class="settings-hint" id="geminiKeyHint">Required for Gemini chat, image analysis and generation.</p>
+
+        <label id="openaiKeyLabel">API Key — OpenAI:</label>
+        <div class="key-input-row">
+          <input type="password" id="openaiKeyInput" placeholder="sk-...">
+          <button class="key-toggle" data-target="openaiKeyInput">👁</button>
+          <button class="key-validate-btn" data-provider="openai" id="btnValidateOpenAI">Check</button>
+        </div>
+        <div class="key-status" id="statusOpenAI"></div>
+        <p class="settings-hint" id="openaiKeyHint">Required for GPT models and DALL-E.</p>
+
+        <label id="anthropicKeyLabel">API Key — Anthropic (Claude):</label>
+        <div class="key-input-row">
+          <input type="password" id="anthropicKeyInput" placeholder="sk-ant-...">
+          <button class="key-toggle" data-target="anthropicKeyInput">👁</button>
+          <button class="key-validate-btn" data-provider="anthropic" id="btnValidateAnthropic">Check</button>
+        </div>
+        <div class="key-status" id="statusAnthropic"></div>
+        <p class="settings-hint" id="anthropicKeyHint">Required for Claude models.</p>
+        <p class="settings-hint keys-note" id="keysStoredLocally">Keys stored locally, never synced.</p>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionChatModel">🤖 Chat Model</div>
+        <label id="chatModelLabel">Select model:</label>
+        <select id="modelSelect"></select>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionImageModel">🖼️ Image Generation Model</div>
+        <label id="imageModelLabel">Provider / model:</label>
+        <select id="imageModelSelect"></select>
+        <p class="settings-hint" id="imageModelNote">Requires Gemini key (Imagen) or OpenAI key (DALL-E).</p>
+        <div class="scan-row">
+          <button id="btnScanImageModels" class="scan-btn">🔍 Scan Gemini models</button>
+          <span id="scanStatus" class="scan-status"></span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionImageEditModel">✏️ Image Edit Model</div>
+        <label id="imageEditModelLabel">Gemini model:</label>
+        <select id="imageEditModelSelect"></select>
+        <p class="settings-hint" id="imageEditModelNote">Requires Gemini key. Supports models with native image editing (e.g. gemini-2.5-flash-image).</p>
+        <div class="scan-row">
+          <button id="btnScanImageEditModels" class="scan-btn">🔍 Scan edit models</button>
+          <span id="scanEditStatus" class="scan-status"></span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionAppearance">🎨 Appearance</div>
+        <label id="themeLabel">Theme:</label>
+        <select id="themeSelect">
+          <option value="light" id="optLight">☀️ Light</option>
+          <option value="dark"  id="optDark">🌙 Dark</option>
+          <option value="system" id="optSystem">🖥️ System (Auto)</option>
+        </select>
+        <label id="languageLabel" style="margin-top:10px">Interface language:</label>
+        <select id="langSelect">
+          <option value="auto" id="optLangAuto">🌐 Automatic</option>
+          <option value="pl"   id="optLangPl">🇵🇱 Polski</option>
+          <option value="en"   id="optLangEn">🇬🇧 English</option>
+        </select>
+        <label id="fontSizeLabel" style="margin-top:10px">Font size:</label>
+        <div class="font-size-picker">
+          <button class="font-size-btn" data-size="small"  id="fsBtnSmall">A</button>
+          <button class="font-size-btn active" data-size="medium" id="fsBtnMedium">A</button>
+          <button class="font-size-btn" data-size="large"  id="fsBtnLarge">A</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionTTS">🗣️ Text-to-Speech</div>
+        <label id="voiceLabel">Voice:</label>
+        <select id="voiceSelect"></select>
+        <label class="checkbox-label" style="margin-top:8px">
+          <input type="checkbox" id="autoReadCheck">
+          <span id="autoReadLabel">Read responses automatically</span>
+        </label>
+      </div>
+
+      <button id="btnSaveSettings">💾 Save &amp; Close</button>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="syntax-highlight.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

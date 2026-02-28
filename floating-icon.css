@@ -1,0 +1,33 @@
+#ai-agent-trigger {
+  position: fixed;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  z-index: 2147483647;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#ai-agent-trigger:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+#ai-agent-trigger img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  /* FIX: drop-shadow nie istnieje jako standalone właściwość — poprawna składnia: */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}

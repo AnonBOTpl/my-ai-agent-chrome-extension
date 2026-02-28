@@ -1,0 +1,10 @@
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# Pliki środowisk programistycznych
+.vscode/
+.idea/
+
+# Jeśli kiedykolwiek będziesz pakować rozszerzenie do ZIPa
+*.zip

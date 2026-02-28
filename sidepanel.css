@@ -35,12 +35,55 @@ body.font-large  { --font-size-chat:16px; --font-size-ui:14px; }
 body { margin:0; padding:0; font-family:'Segoe UI',sans-serif; display:flex; flex-direction:column; height:100vh; background:var(--bg-body); color:var(--text-main); transition:background .3s,color .3s; font-size:var(--font-size-ui); }
 
 /* ══ HEADER ══════════════════════════════════════════════════ */
-header { display:flex; justify-content:space-between; align-items:center; padding:10px 15px; background:var(--bg-header); border-bottom:1px solid var(--border); flex-shrink:0; }
-.logo-area { display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--accent); }
+header { display:flex; justify-content:space-between; align-items:center; padding:8px 15px; background:var(--bg-header); border-bottom:1px solid var(--border); flex-shrink:0; gap:8px; }
+.logo-area { display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--accent); flex-shrink:0; }
 .logo-area img { width:20px; }
-.header-right { display:flex; align-items:center; gap:6px; }
+.header-center { flex:1; display:flex; justify-content:center; }
+.header-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
 .header-right button { background:none; border:none; cursor:pointer; font-size:18px; color:var(--text-secondary); padding:6px; border-radius:50%; transition:.2s; }
 .header-right button:hover { background:var(--bg-secondary); }
+
+/* ══ MODEL QUICKSWITCH ═══════════════════════════════════════ */
+.model-quick-switch { position:relative; }
+.model-switch-btn {
+  display:flex; align-items:center; gap:5px;
+  background:var(--bg-secondary); border:1px solid var(--border);
+  border-radius:20px; padding:4px 12px; cursor:pointer;
+  font-size:12px; font-weight:600; color:var(--text-main);
+  transition:.2s; white-space:nowrap; max-width:200px;
+}
+.model-switch-btn:hover { background:var(--bg-header); filter:brightness(1.1); }
+.model-switch-arrow { font-size:10px; opacity:0.6; }
+.model-switch-dropdown {
+  position:absolute; top:calc(100% + 6px); left:50%; transform:translateX(-50%);
+  background:var(--bg-header); border:1px solid var(--border);
+  border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.25);
+  min-width:200px; z-index:1000; overflow:hidden; padding:6px 0;
+}
+.qs-group-label {
+  font-size:10px; font-weight:700; letter-spacing:0.8px;
+  text-transform:uppercase; padding:8px 14px 4px;
+  opacity:0.8;
+}
+.qs-item {
+  display:block; width:100%; text-align:left;
+  background:none; border:none; cursor:pointer;
+  padding:7px 14px; font-size:13px; color:var(--text-main);
+  transition:.15s;
+}
+.qs-item:hover { background:var(--bg-secondary); }
+.qs-item-active { font-weight:700; color:var(--accent); }
+.qs-item-active::before { content:'✓ '; }
+
+/* ══ SYSTEM PROMPT TEXTAREAS ═════════════════════════════════ */
+.system-prompt-textarea {
+  width:100%; padding:8px 10px;
+  background:var(--bg-secondary); border:1px solid var(--border);
+  border-radius:6px; color:var(--text-main);
+  font-size:12px; font-family:inherit; resize:vertical;
+  transition:.2s;
+}
+.system-prompt-textarea:focus { border-color:var(--accent); outline:none; }
 #btnStopTTS { color:var(--danger); }
 .token-counter { font-size:11px; color:var(--text-secondary); background:var(--bg-secondary); border:1px solid var(--border); border-radius:10px; padding:2px 8px; white-space:nowrap; }
 

@@ -41,6 +41,8 @@ let apiKeys          = { gemini:"", openai:"", anthropic:"" };
 let currentChatModelId  = "gemini-2.5-flash";
 let currentImageModelId = "imagen-4.0-generate-preview-06-06";
 let currentImageEditModelId = "gemini-2.5-flash-image";
+
+let systemPrompts = { gemini: '', openai: '', anthropic: '' };
 let currentVoice     = null;
 let autoRead         = false;
 let enhancePrompt    = true;
@@ -115,6 +117,12 @@ const btnDownloadImg   = $('btnDownloadImg');
 
 const settingsModal    = $('settings-modal');
 const btnSettings      = $('btnSettings');
+const btnModelSwitch   = $('btnModelSwitch');
+const modelSwitchLabel = $('modelSwitchLabel');
+const modelSwitchDropdown = $('modelSwitchDropdown');
+const systemPromptGemini   = $('systemPromptGemini');
+const systemPromptOpenAI   = $('systemPromptOpenAI');
+const systemPromptAnthropic= $('systemPromptAnthropic');
 const btnSaveSettings  = $('btnSaveSettings');
 const apiKeyInput      = $('apiKeyInput');
 const openaiKeyInput   = $('openaiKeyInput');
@@ -1044,7 +1052,8 @@ function updateSectionTokenCounter(section, tokens){
 // ============================================================
 async function streamGemini(key,history,targetEl){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${currentChatModelId}:streamGenerateContent?alt=sse`;
-  const sysPr=resolvedLang()==='pl'?SYSTEM_PROMPT_PL:SYSTEM_PROMPT_EN;
+  const defaultSysPr=resolvedLang()==='pl'?SYSTEM_PROMPT_PL:SYSTEM_PROMPT_EN;
+  const sysPr=systemPrompts.gemini ? systemPrompts.gemini+'\n\n'+defaultSysPr : defaultSysPr;
   const r=await fetch(url,{
     method:'POST',
     headers:{'Content-Type':'application/json','x-goog-api-key':key},
@@ -1059,8 +1068,10 @@ async function streamGemini(key,history,targetEl){
 }
 
 async function streamOpenAI(key,history,targetEl){
+  const defaultSysPr=resolvedLang()==='pl'?SYSTEM_PROMPT_PL:SYSTEM_PROMPT_EN;
+  const sysPr=systemPrompts.openai ? systemPrompts.openai+'\n\n'+defaultSysPr : defaultSysPr;
   const messages=[
-    {role:'system',content:resolvedLang()==='pl'?SYSTEM_PROMPT_PL:SYSTEM_PROMPT_EN},
+    {role:'system',content:sysPr},
     ...history.map(msg=>{
       const role=msg.role==='model'?'assistant':'user';
       if(msg.parts.length===1&&msg.parts[0].text) return {role,content:msg.parts[0].text};
@@ -1097,7 +1108,8 @@ async function streamAnthropic(key,history,targetEl){
     }).filter(Boolean);
     return {role,content};
   });
-  const sysPr=resolvedLang()==='pl'?SYSTEM_PROMPT_PL:SYSTEM_PROMPT_EN;
+  const defaultSysPr=resolvedLang()==='pl'?SYSTEM_PROMPT_PL:SYSTEM_PROMPT_EN;
+  const sysPr=systemPrompts.anthropic ? systemPrompts.anthropic+'\n\n'+defaultSysPr : defaultSysPr;
   const r=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -1527,6 +1539,57 @@ function updateGenerateModelWarning(){
 // ============================================================
 btnStopTTS.addEventListener('click',()=>window.speechSynthesis.cancel());
 
+// ── MODEL QUICKSWITCH ─────────────────────────────────────────
+function updateModelSwitchLabel(){
+  const model = CHAT_MODELS.find(m=>m.id===currentChatModelId);
+  if(!model){ modelSwitchLabel.textContent='Model'; return; }
+  // Skróć label jeśli za długi
+  const short = model.label.replace(/\s*\(.*?\)/g,'').trim();
+  modelSwitchLabel.textContent = short.length>22 ? short.slice(0,21)+'…' : short;
+  // Kolor providera
+  const colors = { gemini:'#4285f4', openai:'#34a853', anthropic:'#e8762b' };
+  btnModelSwitch.style.borderColor = colors[model.provider]||'var(--border)';
+  btnModelSwitch.style.color = colors[model.provider]||'var(--text-main)';
+}
+
+function buildModelSwitchDropdown(){
+  modelSwitchDropdown.innerHTML='';
+  const groups={};
+  CHAT_MODELS.forEach(m=>{if(!groups[m.provider])groups[m.provider]=[];groups[m.provider].push(m);});
+  const providerLabels={ gemini:'Google Gemini', openai:'OpenAI', anthropic:'Anthropic' };
+  const providerColors={ gemini:'#4285f4', openai:'#34a853', anthropic:'#e8762b' };
+  Object.entries(groups).forEach(([prov,models])=>{
+    const grpLabel=document.createElement('div');
+    grpLabel.className='qs-group-label';
+    grpLabel.textContent=providerLabels[prov]||prov;
+    grpLabel.style.color=providerColors[prov]||'var(--text-secondary)';
+    modelSwitchDropdown.appendChild(grpLabel);
+    models.forEach(m=>{
+      const item=document.createElement('button');
+      item.className='qs-item'+(m.id===currentChatModelId?' qs-item-active':'');
+      item.textContent=m.label.replace(/\s*\(.*?\)/g,'').trim();
+      item.title=m.label;
+      item.addEventListener('click',()=>{
+        currentChatModelId=m.id;
+        modelSelect.value=m.id;
+        updateModelSwitchLabel();
+        buildModelSwitchDropdown();
+        modelSwitchDropdown.classList.add('hidden');
+        // Zapisz wybór
+        chrome.storage.local.set({chatModel:currentChatModelId});
+      });
+      modelSwitchDropdown.appendChild(item);
+    });
+  });
+}
+
+btnModelSwitch.addEventListener('click', e=>{
+  e.stopPropagation();
+  buildModelSwitchDropdown();
+  modelSwitchDropdown.classList.toggle('hidden');
+});
+document.addEventListener('click', ()=>modelSwitchDropdown.classList.add('hidden'));
+
 btnSettings.addEventListener('click',()=>{
   apiKeyInput.value=apiKeys.gemini;
   openaiKeyInput.value=apiKeys.openai;
@@ -1538,7 +1601,9 @@ btnSettings.addEventListener('click',()=>{
   imageModelSelect.value=currentImageModelId;
   if([...imageEditModelSelect.options].some(o=>o.value===currentImageEditModelId))
     imageEditModelSelect.value=currentImageEditModelId;
-  // Reset statusów walidacji
+  systemPromptGemini.value=systemPrompts.gemini||'';
+  systemPromptOpenAI.value=systemPrompts.openai||'';
+  systemPromptAnthropic.value=systemPrompts.anthropic||'';
   ['statusGemini','statusOpenAI','statusAnthropic'].forEach(id=>{
     const el=$(id); if(el){el.textContent='';el.className='key-status';}
   });
@@ -1553,10 +1618,14 @@ btnSaveSettings.addEventListener('click',async()=>{
   currentTheme=themeSelect.value; currentLang=langSelect.value;
   currentChatModelId=modelSelect.value; currentImageModelId=imageModelSelect.value;
   currentImageEditModelId=imageEditModelSelect.value;
-  await chrome.storage.local.set({apiKeys,preferredVoice:voice,autoRead,theme:currentTheme,lang:currentLang,chatModel:currentChatModelId,imageModel:currentImageModelId,imageEditModel:currentImageEditModelId,fontSize:currentFontSize});
+  systemPrompts.gemini=systemPromptGemini.value.trim();
+  systemPrompts.openai=systemPromptOpenAI.value.trim();
+  systemPrompts.anthropic=systemPromptAnthropic.value.trim();
+  await chrome.storage.local.set({apiKeys,preferredVoice:voice,autoRead,theme:currentTheme,lang:currentLang,chatModel:currentChatModelId,imageModel:currentImageModelId,imageEditModel:currentImageEditModelId,fontSize:currentFontSize,systemPrompts});
   applyTheme(currentTheme); applyLang();
   currentVoice=window.speechSynthesis.getVoices().find(v=>v.name===voice)||null;
-  updateGenerateModelWarning(); updateEditBanner(); settingsModal.classList.add('hidden');
+  updateGenerateModelWarning(); updateEditBanner(); updateModelSwitchLabel();
+  settingsModal.classList.add('hidden');
 });
 
 settingsModal.addEventListener('click',e=>{if(e.target===settingsModal)settingsModal.classList.add('hidden');});
@@ -1623,7 +1692,7 @@ confirmModal.addEventListener('click',e=>{if(e.target===confirmModal){confirmMod
 
 // ── WCZYTYWANIE USTAWIEŃ ────────────────────────────────────
 async function loadSettings(){
-  const data=await chrome.storage.local.get(['apiKeys','preferredVoice','autoRead','theme','lang','chatModel','imageModel','imageEditModel','fontSize','scannedGeminiImageModels','scannedGeminiEditModels','customSnippets']);
+  const data=await chrome.storage.local.get(['apiKeys','preferredVoice','autoRead','theme','lang','chatModel','imageModel','imageEditModel','fontSize','scannedGeminiImageModels','scannedGeminiEditModels','customSnippets','systemPrompts']);
   if(data.apiKeys)apiKeys={...apiKeys,...data.apiKeys};
   else{const old=await chrome.storage.local.get('geminiApiKey');if(old.geminiApiKey)apiKeys.gemini=old.geminiApiKey;}
   if(data.autoRead)   autoRead=data.autoRead;
@@ -1632,6 +1701,7 @@ async function loadSettings(){
   if(data.lang)       currentLang=data.lang;
   if(data.fontSize) {currentFontSize=data.fontSize;applyFontSize(data.fontSize);}
   if(data.customSnippets)customSnippets=data.customSnippets;
+  if(data.systemPrompts)systemPrompts={...systemPrompts,...data.systemPrompts};
   if(data.preferredVoice){
     const try_=()=>{const v=window.speechSynthesis.getVoices().find(v=>v.name===data.preferredVoice);if(v)currentVoice=v;};
     try_(); window.speechSynthesis.onvoiceschanged=()=>{try_();populateVoices();};
@@ -1647,6 +1717,7 @@ async function loadSettings(){
     currentImageEditModelId=data.imageEditModel;
     if([...imageEditModelSelect.options].some(o=>o.value===data.imageEditModel))imageEditModelSelect.value=data.imageEditModel;
   }
+  updateModelSwitchLabel();
   await loadChatHistory();
   const session=await chrome.storage.session.get('cachedImage');
   if(session.cachedImage){setupImagePreview(session.cachedImage.dataUrl,session.cachedImage.mimeType);imageOutput.innerText=T?T.imageRestored:'Image restored.';}

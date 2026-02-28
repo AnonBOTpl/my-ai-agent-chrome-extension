@@ -13,6 +13,15 @@
       <img src="icon.png" alt="Logo">
       <span id="appName">AI Agent</span>
     </div>
+    <div class="header-center">
+      <div id="modelQuickSwitch" class="model-quick-switch">
+        <button id="btnModelSwitch" class="model-switch-btn">
+          <span id="modelSwitchLabel">Model</span>
+          <span class="model-switch-arrow">▾</span>
+        </button>
+        <div id="modelSwitchDropdown" class="model-switch-dropdown hidden"></div>
+      </div>
+    </div>
     <div class="header-right">
       <div id="token-counter" class="token-counter hidden">
         <span id="tokenCount">0</span><span class="token-label"> tk</span>
@@ -261,6 +270,29 @@
         <div class="settings-section-title" id="sectionChatModel">🤖 Chat Model</div>
         <label id="chatModelLabel">Select model:</label>
         <select id="modelSelect"></select>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title" id="sectionSystemPrompts">🧠 System Prompts <span style="font-size:11px;font-weight:400;color:var(--text-secondary)">(per provider)</span></div>
+        <p class="settings-hint" id="systemPromptsHint">Customize each AI's personality. Leave empty for default behavior.</p>
+        <label style="margin-top:8px;display:block;">
+          <span style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <img src="https://www.google.com/favicon.ico" width="12" height="12"> Gemini
+          </span>
+          <textarea id="systemPromptGemini" rows="3" class="system-prompt-textarea" placeholder="e.g. You are a concise coding assistant. Always respond in English."></textarea>
+        </label>
+        <label style="margin-top:10px;display:block;">
+          <span style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <span style="font-size:12px;">🟢</span> OpenAI
+          </span>
+          <textarea id="systemPromptOpenAI" rows="3" class="system-prompt-textarea" placeholder="e.g. You are a creative writer. Be expressive and use vivid language."></textarea>
+        </label>
+        <label style="margin-top:10px;display:block;">
+          <span style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <span style="font-size:12px;">🟠</span> Anthropic (Claude)
+          </span>
+          <textarea id="systemPromptAnthropic" rows="3" class="system-prompt-textarea" placeholder="e.g. You are a thoughtful analyst. Think step by step before answering."></textarea>
+        </label>
       </div>
 
       <div class="settings-section">

@@ -1,6 +1,6 @@
 # 🤖 My AI Agent - Ultimate Chrome Extension
 
-![Version](https://img.shields.io/badge/version-5.7-blue.svg)
+![Version](https://img.shields.io/badge/version-5.8-blue.svg)
 ![Manifest](https://img.shields.io/badge/Chrome_Manifest-V3-green.svg)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg)
 
@@ -12,6 +12,8 @@
 
 ### 💬 Multi-Provider AI Chat
 - Switch seamlessly between top-tier models from **Google** (Gemini 2.5 Flash/Pro, 2.0 Flash), **OpenAI** (GPT-4o, GPT-4.1, o3-mini), and **Anthropic** (Claude Sonnet 4, Opus 4, Haiku 3.5).
+- **Model Quick Switch** – change the active AI model instantly from a dropdown in the header bar, without opening Settings. The button is color-coded by provider.
+- **Custom System Prompts per provider** – define a different personality or behavior for Gemini, OpenAI, and Anthropic independently (e.g. "concise coding assistant" for Gemini, "creative writer" for Claude).
 - Context-aware streaming responses with markdown support, syntax highlighting, and **clickable links**.
 - Code blocks include a **filename field** with one-click **Copy** and **Download** buttons — filename is auto-detected from code comments.
 - Built-in token counter to track your API usage.

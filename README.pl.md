@@ -39,15 +39,6 @@
 
 ---
 
-## 📸 Zrzuty ekranu
-
-*(Dodaj swoje zrzuty ekranu tutaj)*
-* `![Interfejs Czatu](LINK_DO_OBRAZKA)` - Pokaż czat i opcje modeli.
-* `![Zrzuty Ekranu](LINK_DO_OBRAZKA)` - Pokaż narzędzie do zaznaczania obszaru strony i edytor AI.
-* `![Narzędzia Tekstowe](LINK_DO_OBRAZKA)` - Pokaż narzędzia wywoływane na zaznaczonym tekście.
-
----
-
 ## 🚀 Instalacja 
 
 Ponieważ to rozszerzenie wykorzystuje Twoje własne klucze API, powinno być instalowane lokalnie w Trybie Programisty.
